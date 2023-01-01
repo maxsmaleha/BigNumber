@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Interview
 {
@@ -33,17 +34,57 @@ namespace Interview
 
         public BigNumber(string x)
         {
-            throw new NotImplementedException();
+            digits = Enumerable.Repeat(-1, x.Length + 1).ToArray(); //new int[x.Length];
+
+            for (int i = 0; i < x.Length; i++)
+            {
+                var chr = x[x.Length - 1 - i];
+                digits[i] = int.Parse(chr.ToString());
+            }
         }
 
         public override string ToString()
         {
-            throw new NotImplementedException();
+            var str = "";
+            for (int i = 0; i < digits.Length; i++)
+            {
+                var chr = digits[digits.Length - 1 - i].ToString();
+                if (!string.IsNullOrEmpty(chr) && chr != "-1")
+                {
+                    str += chr;
+                }
+            }
+
+            return str;
         }
 
         public static BigNumber operator +(BigNumber a, BigNumber b)
         {
-            throw new NotImplementedException();
+            var aa = a.ToString();
+            var bb = b.ToString();
+
+            var max = aa.Length > bb.Length ? aa : bb;
+
+            var list = new List<string>();
+            var mem = 0;
+            for (int i = 0; i < max.Length; i++)
+            {
+                var num1 = int.Parse(i >= aa.Length ? "0" : aa[aa.Length - 1 - i].ToString());
+                var num2 = int.Parse(i >= bb.Length ? "0" : bb[bb.Length - 1 - i].ToString());
+                var sum = num1 + num2 + mem;
+
+                mem = sum / 10;
+                list.Add((sum % 10).ToString());
+            }
+
+            if (mem != 0)
+            {
+                list.Add(mem.ToString());
+            }
+
+            var str = list.Aggregate("", (acc, cur) => cur + acc);
+
+            return new BigNumber(str);
         }
     }
 }
